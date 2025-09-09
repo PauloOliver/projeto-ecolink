@@ -13,38 +13,37 @@ import {
 
 export function NavigationBar() {
   return (
-    <Navbar fluid className="bg-green-600 dark:bg-green-900">
+    <Navbar fluid className="bg-gradient-to-br from-lime-300 to-emerald-500">
       <NavbarBrand href="https://flowbite-react.com">
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite React</span>
+        <img src="src\assets\logo_EcoLink.png" className="mr-3 h-6 sm:h-9" alt="Ecolink React Logo" />
+        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Ecolink</span>
       </NavbarBrand>
       <div className="flex md:order-2">
         <Dropdown
           arrowIcon={false}
           inline
           label={
-            <Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded />
+            <Avatar alt="User settings" img="src\assets\Steve-Jobs.jpg" rounded />
           }
         >
           <DropdownHeader>
-            <span className="block text-sm">Bonnie Green</span>
-            <span className="block truncate text-sm font-medium">name@flowbite.com</span>
+            <span className="block text-sm">John Testes</span>
+            <span className="block truncate text-sm font-medium">john@email.com</span>
           </DropdownHeader>
-          <DropdownItem>Dashboard</DropdownItem>
-          <DropdownItem>Settings</DropdownItem>
-          <DropdownItem>Earnings</DropdownItem>
+          <DropdownItem>Inicio</DropdownItem>
+          <DropdownItem>Rede Social</DropdownItem>
+          <DropdownItem>Perfil</DropdownItem>
           <DropdownDivider />
-          <DropdownItem>Sign out</DropdownItem>
+          <DropdownItem>Sair</DropdownItem>
         </Dropdown>
         <NavbarToggle />
       </div>
       <NavbarCollapse>
-        <NavbarLink href="#" active>
-          Home
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline" >
+          Inicio
         </NavbarLink>
-        <NavbarLink href="#">About</NavbarLink>
-        <NavbarLink href="#">Services</NavbarLink>
-        <NavbarLink href="#">Pricing</NavbarLink>
-        <NavbarLink href="#">Contact</NavbarLink>
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Descubra</NavbarLink>
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Contato </NavbarLink>
       </NavbarCollapse>
     </Navbar>
   );
