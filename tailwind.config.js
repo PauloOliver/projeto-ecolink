@@ -11,6 +11,9 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+        body: ['Inter', 'sans-serif'], // nome da fonte
+      },
   },
   plugins: [flowbite, flowbiteReact],
 };
