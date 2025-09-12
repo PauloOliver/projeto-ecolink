@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import heroImg from "../assets/imgNavbar.png";
 
 type HomeBannerProps = {
   title?: string;
@@ -16,7 +17,7 @@ export default function HomeBanner({
   description = "Join our protecting environmental collaboration: reducing a positive impact on the planet.",
   ctaText = "Learn More",
   onCta,
-  imageSrc = "https://sdmntprcentralus.oaiusercontent.com/files/00000000-6900-61f5-9f05-599bc43c0a4a/raw?se=2025-09-12T00%3A35%3A44Z&sp=r&sv=2024-08-04&sr=b&scid=3a7a0b0b-8f1c-587f-b09f-713e61f91f3e&skoid=e9d2f8b1-028a-4cff-8eb1-d0e66fbefcca&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-11T22%3A05%3A39Z&ske=2025-09-12T22%3A05%3A39Z&sks=b&skv=2024-08-04&sig=%2B39SSlKSDImb0pPEe7LqkIkrxDPkeeOtZtT44HeAuHw%3D",
+  imageSrc = heroImg,
   imageAlt = "Hands holding a small plant",
   offsetNavbar = true,
 }: HomeBannerProps) {
