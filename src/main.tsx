@@ -1,16 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { NavbarComponent } from './components/Navbar'
-
-import HomeBanner from './components/HomeBanner'
-
-
+import { MapaComponent } from './components/Mapa'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-   <NavbarComponent></NavbarComponent>
-   <HomeBanner></HomeBanner>
-  </StrictMode>
+   <MapaComponent></MapaComponent>
+  </StrictMode>,
 )
