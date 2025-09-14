@@ -22,7 +22,6 @@ export default function HomeBanner({
   offsetNavbar = true,
 }: HomeBannerProps) {
   return (
-    <section className={`w-full bg-[#f6efe3] ${offsetNavbar ? "pt-[72px]" : ""}`}>
       <div className="max-w-6xl mx-auto px-4">
         <div
           className="
@@ -65,6 +64,5 @@ export default function HomeBanner({
           </div>
         </div>
       </div>
-    </section>
   );
 }
