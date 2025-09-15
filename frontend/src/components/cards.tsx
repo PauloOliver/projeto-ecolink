@@ -6,7 +6,7 @@ export function CardsComponent() {
       <Card
         className="max-w-sm"
         imgAlt="Imagem 1"
-        imgSrc="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        imgSrc="/images/blog/image-1.jpg"
       >
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Noteworthy technology acquisitions 2021
@@ -19,7 +19,7 @@ export function CardsComponent() {
       <Card
         className="max-w-sm"
         imgAlt="Imagem 2"
-        imgSrc="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        imgSrc="/images/blog/image-2.jpg"
       >
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           New AI advancements 2024
@@ -32,7 +32,7 @@ export function CardsComponent() {
       <Card
         className="max-w-sm"
         imgAlt="Imagem 3"
-        imgSrc="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        imgSrc="/images/blog/image-3.jpg"
       >
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Startup funding trends
@@ -45,7 +45,7 @@ export function CardsComponent() {
       <Card
         className="max-w-sm"
         imgAlt="Imagem 4"
-        imgSrc="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        imgSrc="/images/blog/image-3.jpg"
       >
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Startup funding trends
@@ -57,7 +57,7 @@ export function CardsComponent() {
       <Card
         className="max-w-sm"
         imgAlt="Imagem 4"
-        imgSrc="https://flowbite.com/docs/images/carousel/carousel-1.svg"
+        imgSrc="/images/blog/image-3.jpg"
       >
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Startup funding trends
