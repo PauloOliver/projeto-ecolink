@@ -7,7 +7,7 @@ const customTheme = {
   }
 };
 
-export function CarouselMain() {
+export function CarouselComponent() {
   return (
     <div className="m-6 px-4 h-56 sm:h-64 xl:h-80 2xl:h-96">
       <Carousel slideInterval={800} theme={customTheme}>

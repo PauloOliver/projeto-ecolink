@@ -1,6 +1,6 @@
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 
-export function LoginPage() {
+export default function LoginForm() {
   return (
     <div className="relative min-h-screen">
       
@@ -15,24 +15,24 @@ export function LoginPage() {
           <form className="flex flex-col gap-4">
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="email1" style={{ color: "#047857" }}>Your email</Label>
+                <Label htmlFor="email1" style={{ color: "#047857" }}>Email</Label>
               </div>
-              <TextInput id="email1" type="email" placeholder="name@flowbite.com" required />
+              <TextInput id="email1" type="email" placeholder="exemplo@email.com" required />
             </div>
 
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password1" style={{ color: "#047857" }}>Your password</Label>
+                <Label htmlFor="password1" style={{ color: "#047857" }}>Senha</Label>
               </div>
-              <TextInput id="password1" type="password" required />
+              <TextInput id="password1" type="password" placeholder="*****" required />
             </div>
 
             <div className="flex items-center gap-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember" style={{ color: "#047857" }}>Remember me</Label>
+              <Label htmlFor="remember" style={{ color: "#047857" }}>Lembre-me</Label>
             </div>
 
-            <Button type="submit" className="bg-green-600 hover:bg-green-700">Submit</Button>
+            <Button type="submit" className="bg-green-600 hover:bg-green-700">Confirmar</Button>
           </form>
         </div>
       </div>
