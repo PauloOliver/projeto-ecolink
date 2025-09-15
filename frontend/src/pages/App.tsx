@@ -9,12 +9,10 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <NavigationBar/>
-      <div className="p-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
-      </div>
       <FooterComponent/>
     </div>
   );
