@@ -13,7 +13,7 @@ import {
 
 export function NavigationBar() {
   return (
-    <Navbar fluid className="bg-gradient-to-br from-lime-300 to-emerald-500">
+    <Navbar fluid className="!bg-[#47D7AC]">
       <NavbarBrand href="https://flowbite-react.com">
         <img src="src\assets\logo_EcoLink.png" className="mr-3 h-6 sm:h-9" alt="Ecolink React Logo" />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Ecolink</span>

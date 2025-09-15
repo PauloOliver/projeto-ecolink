@@ -9,8 +9,8 @@ const customTheme = {
 
 export function CarouselMain() {
   return (
-    <div className="px-4 h-56 sm:h-64 xl:h-80 2xl:h-96">
-      <Carousel slideInterval={300} theme={customTheme}>
+    <div className="m-6 px-4 h-56 sm:h-64 xl:h-80 2xl:h-96">
+      <Carousel slideInterval={800} theme={customTheme}>
         <img src="https://flowbite.com/docs/images/carousel/carousel-1.svg" alt="..." />
         <img src="https://flowbite.com/docs/images/carousel/carousel-2.svg" alt="..." />
         <img src="https://flowbite.com/docs/images/carousel/carousel-3.svg" alt="..." />
