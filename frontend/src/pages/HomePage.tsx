@@ -1,7 +1,7 @@
 
 import { CardComponent } from "../components/Card";
 import { CarouselMain } from "../components/Carousel";
-import { JumbotronMain } from "../components/jumbotron";
+import { JumbotronMain } from "../components/Jumbotron.tsx";
 import { MapaComponent } from "../components/Mapa";
 
 
