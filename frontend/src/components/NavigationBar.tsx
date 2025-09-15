@@ -11,8 +11,6 @@ import {
   NavbarToggle,
 } from "flowbite-react";
 
-import { Link } from "react-router-dom";
-
 export function NavigationBar() {
   return (
     <Navbar fluid className="!bg-[#47D7AC]">
@@ -44,8 +42,8 @@ export function NavigationBar() {
         <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline" >
           Inicio
         </NavbarLink>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> <Link to="/" className="text-gray-700 hover:text-blue-600"> Home </Link></NavbarLink>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> <Link to="/about" className="text-gray-700 hover:text-blue-600"> Sobre </Link> </NavbarLink>
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Descubra</NavbarLink>
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Contato </NavbarLink>
       </NavbarCollapse>
     </Navbar>
   );
