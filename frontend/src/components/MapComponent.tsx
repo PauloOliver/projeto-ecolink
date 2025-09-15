@@ -13,7 +13,7 @@ function ClickMarker({ setPosition }) {
   return null;
 }
 
-export function MapaComponent() {
+export function MapComponent() {
   const [position, setPosition] = useState([-22.5233, -44.1044]); // Volta Redonda
   const [formData, setFormData] = useState<any>({
     nome: "",
