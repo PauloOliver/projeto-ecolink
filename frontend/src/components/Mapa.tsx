@@ -2,21 +2,61 @@ import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaf
 import "leaflet/dist/leaflet.css";
 
 import { Label, TextInput, Textarea, Button, Card } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { criarPontoFromForm, listarPontosCursor } from "../services/pontos"; // ajuste o caminho se necessário
 
-function ClickMarker({ setPosition }) {
+function ClickMarker({ setPosition }: { setPosition: (p: any) => void }) {
   useMapEvents({
     click(e) {
-      setPosition(e.latlng); // Atualiza posição ao clicar no mapa
+      setPosition(e.latlng); // atualiza posição ao clicar no mapa
+    },
+  });
+  return null;
+}
+
+function ClickHandler({
+  setPosition,
+  setFormData,
+}: {
+  setPosition: (p: any) => void;
+  setFormData: (updater: any) => void;
+}) {
+  useMapEvents({
+    click: async (e) => {
+      const { lat, lng } = e.latlng;
+      setPosition([lat, lng]);
+
+      const link = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2&addressdetails=1`;
+
+      try {
+        const response = await fetch(link);
+        const data = await response.json();
+
+        if (data && data.address) {
+          const address = data.address;
+          setFormData((prev: any) => ({
+            ...prev,
+            cep: address.postcode || "",
+            cidade: address.city || address.town || address.village || "",
+            rua: address.road || "",
+            bairro: address.suburb || "",
+            numero: address.house_number || "",
+          }));
+        } else {
+          alert("Endereço não encontrado!");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao buscar endereço!");
+      }
     },
   });
   return null;
 }
 
 export function MapaComponent() {
-  const [position, setPosition] = useState([-22.5233, -44.1044]); // Volta Redonda
+  const [position, setPosition] = useState<any>([-22.5233, -44.1044]); // Volta Redonda
   const [formData, setFormData] = useState<any>({
-    nome: "",
     tipo: "",
     cep: "",
     cidade: "",
@@ -30,55 +70,49 @@ export function MapaComponent() {
 
   const [pontos, setPontos] = useState<any[]>([]);
 
-  function ClickHandler() {
-    useMapEvents({
-      click: async (e) => {
-        const { lat, lng } = e.latlng;
-        setPosition([lat, lng]);
+  // carrega a 1ª página de pontos ao montar
+  useEffect(() => {
+    (async () => {
+      try {
+        const { items } = await listarPontosCursor({ limit: 10 });
+        setPontos(items);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, []);
 
-        const link = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2&addressdetails=1`;
-
-        try {
-          const response = await fetch(link);
-          const data = await response.json();
-
-          if (data && data.address) {
-            const address = data.address;
-            setFormData((prev: any) => ({
-              ...prev,
-              cep: address.postcode || "",
-              cidade: address.city || address.town || address.village || "",
-              rua: address.road || "",
-              bairro: address.suburb || "",
-              numero: address.house_number || "",
-            }));
-          } else {
-            alert("Endereço não encontrado!");
-          }
-        } catch (error) {
-          console.error(error);
-          alert("Erro ao buscar endereço!");
-        }
-      },
-    });
-    return null;
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  // envia para o backend e usa o retorno
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPontos([...pontos, { ...formData, position }]);
-    setFormData({
-      nome: "",
-      tipo: "",
-      cep: "",
-      cidade: "",
-      rua: "",
-      bairro: "",
-      numero: "",
-      horario: "",
-      contato: "",
-      observacoes: "",
-    });
+    try {
+      const novo = await criarPontoFromForm({
+        tipo: formData.tipo, // mapeado para "materiais" no serviço
+        cep: formData.cep,
+        numero: formData.numero,
+        rua: formData.rua,
+        bairro: formData.bairro,
+        cidade: formData.cidade,
+        horario: formData.horario, // mapeado para "horario_funcionamento"
+        contato: formData.contato,
+        observacoes: formData.observacoes,
+      });
+
+      setPontos((prev) => [novo, ...prev]);
+      setFormData({
+        tipo: "",
+        cep: "",
+        cidade: "",
+        rua: "",
+        bairro: "",
+        numero: "",
+        horario: "",
+        contato: "",
+        observacoes: "",
+      });
+    } catch (err: any) {
+      alert(err?.response?.data?.error ?? "Erro ao cadastrar ponto");
+    }
   };
 
   return (
@@ -100,7 +134,7 @@ export function MapaComponent() {
               <Popup>Local selecionado</Popup>
             </Marker>
             <ClickMarker setPosition={setPosition} />
-            <ClickHandler />
+            <ClickHandler setPosition={setPosition} setFormData={setFormData} />
           </MapContainer>
         </div>
 
@@ -109,7 +143,6 @@ export function MapaComponent() {
           onSubmit={handleSubmit}
           className="w-full md:w-1/2 flex flex-col gap-3 p-4 bg-white rounded-lg shadow-md"
         >
-          
           <Label htmlFor="tipo" value="Tipo de resíduos" />
           <TextInput
             id="tipo"
@@ -214,18 +247,24 @@ export function MapaComponent() {
                 key={index}
                 className="min-w-[250px] max-w-xs border-green-300 shadow-md flex-shrink-0"
               >
-                <h5 className="text-lg font-bold text-green-700">{ponto.nome}</h5>
-                <p className="text-sm text-gray-600">{ponto.tipo}</p>
+                <h5 className="text-lg font-bold text-green-700">
+                  {ponto.usuario_nome ?? "Ponto de coleta"}
+                </h5>
+                <p className="text-sm text-gray-600">{ponto.materiais}</p>
                 <p className="text-sm">{`${ponto.rua}, ${ponto.numero}, ${ponto.bairro} - ${ponto.cidade}`}</p>
                 <p className="text-sm text-gray-500">CEP: {ponto.cep}</p>
-                {ponto.horario && (
-                  <p className="text-sm text-gray-500">⏰ {ponto.horario}</p>
+                {ponto.horario_funcionamento && (
+                  <p className="text-sm text-gray-500">
+                    ⏰ {ponto.horario_funcionamento}
+                  </p>
                 )}
                 {ponto.contato && (
                   <p className="text-sm text-gray-500">📞 {ponto.contato}</p>
                 )}
                 {ponto.observacoes && (
-                  <p className="text-sm italic text-gray-400">{ponto.observacoes}</p>
+                  <p className="text-sm italic text-gray-400">
+                    {ponto.observacoes}
+                  </p>
                 )}
               </Card>
             ))}
