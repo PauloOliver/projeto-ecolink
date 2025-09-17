@@ -8,6 +8,7 @@ export default {
     "node_modules/flowbite/**/*.js",
     "node_modules/flowbite-react/lib/esm/**/*.js",
     ".flowbite-react/class-list.json",
+    ".flowbite-react\\class-list.json"
   ],
   theme: {
     extend: {},
