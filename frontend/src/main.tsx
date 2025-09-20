@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./pages/App.tsx"; // seu App principal
 import "./index.css";
 
-<<<<<<< HEAD
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
@@ -12,19 +11,3 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </StrictMode>
 );
-=======
-import { MapaComponent } from './components/Mapa';
-
-
-
-
-
-
-
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-  <MapaComponent></MapaComponent>
-  </StrictMode>,
-)
->>>>>>> joao

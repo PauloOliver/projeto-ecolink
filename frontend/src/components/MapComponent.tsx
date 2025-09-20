@@ -54,13 +54,8 @@ function ClickHandler({
   return null;
 }
 
-<<<<<<< HEAD:frontend/src/components/MapComponent.tsx
 export function MapComponent() {
   const [position, setPosition] = useState([-22.5233, -44.1044]); // Volta Redonda
-=======
-export function MapaComponent() {
-  const [position, setPosition] = useState<any>([-22.5233, -44.1044]); // Volta Redonda
->>>>>>> joao:frontend/src/components/Mapa.tsx
   const [formData, setFormData] = useState<any>({
     tipo: "",
     cep: "",
