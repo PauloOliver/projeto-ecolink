@@ -1,3 +1,4 @@
+// src/components/NavbarComponent.tsx
 import {
   Avatar,
   Dropdown,
@@ -10,47 +11,112 @@ import {
   NavbarLink,
   NavbarToggle,
 } from "flowbite-react";
-
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getCurrentUser, logout } from "../services/auth";
 
 export function NavbarComponent() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  // carrega o usuário e escuta login/logout
+  useEffect(() => {
+    setUser(getCurrentUser());
+
+    const handleAuthChanged = () => setUser(getCurrentUser());
+    window.addEventListener("auth-changed", handleAuthChanged);
+    window.addEventListener("storage", handleAuthChanged); // outra aba
+
+    return () => {
+      window.removeEventListener("auth-changed", handleAuthChanged);
+      window.removeEventListener("storage", handleAuthChanged);
+    };
+  }, []);
+
+  // logout
+  function handleLogout() {
+    logout();
+    setUser(null);
+    navigate("/login");
+  }
+
+  // imagem padrão se não houver foto
+  const avatarSrc = user?.foto ?? "/src/assets/Steve-Jobs.jpg";
+
   return (
     <Navbar fluid className="!bg-[#47D7AC]">
-      <NavbarBrand href="https://flowbite-react.com">
-        <img src="src\assets\logo_EcoLink.png" className="mr-3 h-6 sm:h-9" alt="Ecolink React Logo" />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Ecolink</span>
+      {/* Marca */}
+      <NavbarBrand as={Link} to="/">
+        <img
+          src="/src/assets/logo_EcoLink.png"
+          className="mr-3 h-6 sm:h-9"
+          alt="Ecolink Logo"
+        />
+        <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
+          Ecolink
+        </span>
       </NavbarBrand>
+
+      {/* Menu de usuário (avatar + dropdown) */}
       <div className="flex md:order-2">
         <Dropdown
           arrowIcon={false}
           inline
-          label={
-            <Avatar alt="User settings" img="src\assets\Steve-Jobs.jpg" rounded />
-          }
+          label={<Avatar alt="User settings" img={avatarSrc} rounded />}
         >
           <DropdownHeader>
-            <span className="block text-sm">John Testes</span>
-            <span className="block truncate text-sm font-medium">john@email.com</span>
+            <span className="block text-sm">
+              {user?.nome_usuarios ?? "Convidado"}
+            </span>
+            <span className="block truncate text-sm font-medium">
+              {user?.email ?? "—"}
+            </span>
           </DropdownHeader>
-          <DropdownItem>Inicio</DropdownItem>
-          <DropdownItem><Link to="/login">Logar</Link></DropdownItem>
-          <DropdownItem><Link to="/register">Registrar-se</Link></DropdownItem>
-          <DropdownDivider />
-          <DropdownItem>Sair</DropdownItem>
+
+          <DropdownItem as={Link} to="/">Início</DropdownItem>
+
+          {/* Links extras só se não estiver logado */}
+          {!user && (
+            <>
+              <DropdownItem as={Link} to="/login">Logar</DropdownItem>
+              <DropdownItem as={Link} to="/register">Registrar-se</DropdownItem>
+            </>
+          )}
+
+          {/* Botão de logout se estiver logado */}
+          {user && (
+            <>
+              <DropdownDivider />
+              <DropdownItem onClick={handleLogout}>Sair</DropdownItem>
+            </>
+          )}
         </Dropdown>
         <NavbarToggle />
       </div>
+
+      {/* Links principais */}
       <NavbarCollapse>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline" >
-          <Link to="/">
-            Home
-          </Link>
+        <NavbarLink
+          as={Link}
+          to="/"
+          className="font-bold text-lg !text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+        >
+          Home
         </NavbarLink>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline">
-          <Link to="/about">
-            Sobre
-          </Link></NavbarLink>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Contato </NavbarLink>
+        <NavbarLink
+          as={Link}
+          to="/about"
+          className="font-bold text-lg !text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+        >
+          Sobre
+        </NavbarLink>
+        <NavbarLink
+          as={Link}
+          to="/contato"
+          className="font-bold text-lg !text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+        >
+          Contato
+        </NavbarLink>
       </NavbarCollapse>
     </Navbar>
   );
