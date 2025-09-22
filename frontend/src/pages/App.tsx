@@ -2,10 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import { NavbarComponent } from "../components/NavbarComponent.tsx";
 import { FooterComponent } from "../components/FooterComponent.tsx";
 import HomePage from "./HomePage";
-import AboutPage from "./AboutPage";
+import MapPage from "./MapPage.tsx";
 import LoginPage from "./LoginPage.tsx";
 import RegisterPage from "./RegisterPage.tsx";
 import SocialPage from "./SocialPage.tsx";
+import UserProfilePage from "./UserProfilePage.tsx";
+import UpdateUserForm from "../components/UpdateUserForm.tsx";
+import DeleteUserForm from "../components/DeleteUserForm.tsx";
 
 export default function App() {
   return (
@@ -13,10 +16,13 @@ export default function App() {
       <NavbarComponent/>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/map" element={<MapPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/social" element={<SocialPage />} />
+          <Route path="/profile" element={<UserProfilePage />} />
+          <Route path="/update" element={<UpdateUserForm />}></Route>
+          <Route path="/delete" element={<DeleteUserForm />}></Route>
         </Routes>
       <FooterComponent/>
     </div>

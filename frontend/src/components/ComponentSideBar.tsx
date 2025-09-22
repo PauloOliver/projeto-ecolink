@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "./assets/logo-transp.png";
+import logo from '../assets/logo_EcoLink.png'
 
 import {
   Sidebar,
