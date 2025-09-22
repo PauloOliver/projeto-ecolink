@@ -35,6 +35,7 @@ export function NavbarComponent() {
           <DropdownItem>Inicio</DropdownItem>
           <DropdownItem><Link to="/login">Logar</Link></DropdownItem>
           <DropdownItem><Link to="/register">Registrar-se</Link></DropdownItem>
+          <DropdownItem><Link to="/profile">Perfil</Link></DropdownItem>
           <DropdownDivider />
           <DropdownItem>Sair</DropdownItem>
         </Dropdown>
@@ -47,10 +48,15 @@ export function NavbarComponent() {
           </Link>
         </NavbarLink>
         <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline">
-          <Link to="/about">
-            Sobre
-          </Link></NavbarLink>
-        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline"> Contato </NavbarLink>
+          <Link to="/map">
+            Mapa
+          </Link>
+          </NavbarLink>
+        <NavbarLink href="#" className="font-bold text-lg text-gray-100 dark:text-gray-100 transition delay-100 duration-200 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline">  
+          <Link to="/social">
+            Social
+          </Link>
+        </NavbarLink>
       </NavbarCollapse>
     </Navbar>
   );

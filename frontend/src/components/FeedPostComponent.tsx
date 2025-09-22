@@ -1,4 +1,3 @@
-import post1 from "./assets/post1.jpg";
 import {
   BsPersonCircle,
   BsHeart,
@@ -9,6 +8,7 @@ import {
   BsBookmarkFill,
 } from "react-icons/bs";
 import { useState } from "react";
+import post1 from '../assets/separar_caixa.jpg'
 
 export type FeedPostModel = {
   id: string | number;
