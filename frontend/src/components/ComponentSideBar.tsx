@@ -1,5 +1,6 @@
 import { useState } from "react";
 import logo from '../assets/logo_EcoLink.png'
+import { Link } from "react-router-dom";
 
 import {
   Sidebar,
@@ -83,29 +84,35 @@ export default function ComponentSideBar({ onCreate }: Props) {
 
           <SidebarItems>
             <SidebarItemGroup>
-              <SidebarItem
-                href="#"
-                icon={() => <RIcon Icon={HiUser} />}
-                className="ml-6 mb-4 text-base md:text-xl"
-              >
-                Perfil
-              </SidebarItem>
+              <Link to="/profile">
+                <SidebarItem
+                  href="#"
+                  icon={() => <RIcon Icon={HiUser} />}
+                  className="ml-6 mb-4 text-base md:text-xl"
+                >
+                  Perfil
+                </SidebarItem>
+              </Link>
 
-              <SidebarItem
-                href="#"
-                icon={() => <RIcon Icon={HiHome} />}
-                className="ml-6 mb-4 text-base md:text-xl"
-              >
-                Página inicial
-              </SidebarItem>
+              <Link to="/">
+                <SidebarItem
+                  href="#"
+                  icon={() => <RIcon Icon={HiHome} />}
+                  className="ml-6 mb-4 text-base md:text-xl"
+                >
+                  Página inicial
+                </SidebarItem>
+              </Link>
 
-              <SidebarItem
-                href="#"
-                icon={() => <RIcon Icon={HiMap} />}
-                className="ml-6 mb-4 text-base md:text-xl"
-              >
-                Mapa de Coleta
-              </SidebarItem>
+              <Link to="/map">
+                <SidebarItem
+                  href="#"
+                  icon={() => <RIcon Icon={HiMap} />}
+                  className="ml-6 mb-4 text-base md:text-xl"
+                >
+                  Mapa de Coleta
+                </SidebarItem>
+              </Link>
 
               {/* ✅ Item “Criar” no DESKTOP */}
               <SidebarItem
