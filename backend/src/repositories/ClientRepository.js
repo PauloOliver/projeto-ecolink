@@ -18,8 +18,6 @@ export async function getByEmail(email) {
   
 }
 
-//----------------------------------------------
-// post e get mapas
 
 export async function createPonto({
   materiais,cep,numero,rua,bairro,cidade,
