@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import ComponentSideBar from "../components/ComponentSideBar";
 import AssideComponent from "../components/AssideComponent";
 
-// ✅ importe o type junto do componente
 import { FeedPost, type FeedPostModel } from "../components/FeedPostComponent";
 
 export default function SocialPage() {
@@ -16,11 +15,10 @@ export default function SocialPage() {
     },
   ]);
 
-  // input "invisível" para abrir câmera/galeria
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   function handleCreate() {
-    fileRef.current?.click(); // abre câmera/galeria
+    fileRef.current?.click();
   }
 
   function handleFileChosen(file: File) {
@@ -37,17 +35,17 @@ export default function SocialPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* HEADER + SIDEBAR ESQUERDA */}
+    
       <header className="fixed top-0 left-0 right-0 z-40">
         <ComponentSideBar onCreate={handleCreate} />
       </header>
 
-      {/* ASIDE DIREITA: só em lg+ */}
+      
       <aside className="hidden lg:block fixed top-16 right-0 bottom-0 w-[22rem] overflow-y-auto">
         <AssideComponent />
       </aside>
 
-      {/* MAIN */}
+      
       <main
         className="
           pt-24 pb-24 px-4
@@ -65,7 +63,7 @@ export default function SocialPage() {
         </div>
       </main>
 
-      {/* input invisível: câmera/galeria */}
+    
       <input
         ref={fileRef}
         type="file"
@@ -75,7 +73,7 @@ export default function SocialPage() {
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFileChosen(file);
-          e.currentTarget.value = ""; // permite selecionar o mesmo arquivo novamente
+          e.currentTarget.value = "";
         }}
       />
     </div>

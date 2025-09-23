@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from '../assets/logo_EcoLink.png'
+import logo from '../assets/logo-transp.png'
 import { Link } from "react-router-dom";
 
 import {
@@ -20,13 +20,13 @@ import {
 } from "react-icons/hi";
 
 type Props = {
-  onCreate: () => void; // ⬅ recebe o handler do App
+  onCreate: () => void;
 };
 
 export default function ComponentSideBar({ onCreate }: Props) {
   const [open, setOpen] = useState(false);
 
-  // helper pra renderizar ícone com tamanho responsivo
+
   const RIcon = ({
     Icon,
   }: {
@@ -44,7 +44,6 @@ export default function ComponentSideBar({ onCreate }: Props) {
 
   return (
     <>
-      {/* Topbar só no mobile: logo + botão para abrir o menu */}
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between bg-white/90 backdrop-blur px-4 py-3">
         <img src={logo} alt="Logo" className="w-20 h-auto" />
         <button
@@ -56,7 +55,6 @@ export default function ComponentSideBar({ onCreate }: Props) {
         </button>
       </div>
 
-      {/* Overlay quando o drawer estiver aberto no mobile */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/30 md:hidden"
@@ -64,9 +62,8 @@ export default function ComponentSideBar({ onCreate }: Props) {
         />
       )}
 
-      {/* Container lateral: drawer no mobile, fixo no desktop */}
       <aside
-        className={[
+        className={[ 
           "fixed md:static z-50 md:z-auto inset-y-0 left-0",
           "w-64 md:w-72",
           "transform transition-transform duration-300",
@@ -114,7 +111,6 @@ export default function ComponentSideBar({ onCreate }: Props) {
                 </SidebarItem>
               </Link>
 
-              {/* ✅ Item “Criar” no DESKTOP */}
               <SidebarItem
                 href="#"
                 onClick={(e) => {
@@ -137,7 +133,6 @@ export default function ComponentSideBar({ onCreate }: Props) {
             </SidebarItemGroup>
           </SidebarItems>
 
-          {/* Botão fechar só no mobile */}
           <div className="md:hidden px-4 pb-4">
             <button
               onClick={() => setOpen(false)}
@@ -149,7 +144,6 @@ export default function ComponentSideBar({ onCreate }: Props) {
         </Sidebar>
       </aside>
 
-      {/* ✅ FAB “+” no MOBILE (central inferior) */}
       <div className="md:hidden fixed bottom-5 inset-x-0 z-50 flex justify-center pointer-events-none">
         <button
           onClick={onCreate}
