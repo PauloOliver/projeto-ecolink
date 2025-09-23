@@ -32,7 +32,7 @@ export default function LoginForm() {
       // dispara evento para atualizar a Navbar
       window.dispatchEvent(new Event("auth-changed"));
 
-      // redirecionar (opcional)
+      // redirecionar 
       navigate("/");
     } catch (err: any) {
       setErro(err?.response?.data?.error ?? "Falha no login");
