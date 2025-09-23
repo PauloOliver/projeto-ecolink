@@ -3,12 +3,12 @@ import "leaflet/dist/leaflet.css";
 
 import { Label, TextInput, Textarea, Button, Card } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { criarPontoFromForm, listarPontosCursor } from "../services/pontos"; // ajuste o caminho se necessário
+import { criarPontoFromForm, listarPontosCursor } from "../services/pontos"; 
 
 function ClickMarker({ setPosition }: { setPosition: (p: any) => void }) {
   useMapEvents({
     click(e) {
-      setPosition(e.latlng); // atualiza posição ao clicar no mapa
+      setPosition(e.latlng); 
     },
   });
   return null;
@@ -98,7 +98,8 @@ export function MapComponent() {
         observacoes: formData.observacoes,
       });
 
-      setPontos((prev) => [novo, ...prev]);
+      setPontos((prev) => [...prev, novo]);
+
       setFormData({
         tipo: "",
         cep: "",
