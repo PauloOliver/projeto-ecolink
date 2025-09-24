@@ -4,9 +4,11 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "poku",
+    "test:seq": "poku --sequential",
+    "test:watch": "poku --watch"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,10 @@
     "pg": "^8.16.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/node": "^24.5.2",
+    "nodemon": "^3.1.10",
+    "poku": "^3.0.2",
+    "quibble": "^0.9.2",
+    "tsx": "^4.20.5"
   }
 }
