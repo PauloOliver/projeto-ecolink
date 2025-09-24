@@ -43,8 +43,6 @@ export async function deleteUsuario(id) {
 }
 
 
-//----------------------------------------------
-// post e get mapas
 
 export async function createPonto({
   materiais,cep,numero,rua,bairro,cidade,
