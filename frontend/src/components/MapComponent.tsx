@@ -1,6 +1,5 @@
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-
 import { Label, TextInput, Textarea, Button, Card } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { criarPontoFromForm, listarPontosCursor } from "../services/pontos"; 
@@ -68,37 +67,56 @@ export function MapComponent() {
     observacoes: "",
   });
 
+  // PAGINAÇÃO
   const [pontos, setPontos] = useState<any[]>([]);
+  const [cursor, setCursor] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // carrega a 1ª página de pontos ao montar
+  // função para carregar pontos do backend
+  async function carregarMais() {
+    if (!hasMore || loading) return;
+    setLoading(true);
+
+    try {
+      const { items, next_cursor } = await listarPontosCursor({
+        limit: 10,
+        cursor,
+      });
+
+      setPontos((prev) => [...prev, ...items]);
+      setCursor(next_cursor ?? null);
+      setHasMore(!!next_cursor);
+    } catch (err) {
+      console.error("Erro ao carregar pontos:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // primeira carga
   useEffect(() => {
-    (async () => {
-      try {
-        const { items } = await listarPontosCursor({ limit: 10 });
-        setPontos(items);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
+    carregarMais();
   }, []);
 
-  // envia para o backend e usa o retorno
+  // enviar novo ponto
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const novo = await criarPontoFromForm({
-        tipo: formData.tipo, // mapeado para "materiais" no serviço
+        tipo: formData.tipo,
         cep: formData.cep,
         numero: formData.numero,
         rua: formData.rua,
         bairro: formData.bairro,
         cidade: formData.cidade,
-        horario: formData.horario, // mapeado para "horario_funcionamento"
+        horario: formData.horario,
         contato: formData.contato,
         observacoes: formData.observacoes,
       });
 
-      setPontos((prev) => [...prev, novo]);
+      // novo ponto aparece no início da lista
+      setPontos((prev) => [novo, ...prev]);
 
       setFormData({
         tipo: "",
@@ -239,9 +257,20 @@ export function MapComponent() {
         </form>
       </div>
 
-      {/* LISTA DE PONTOS CADASTRADOS EM CARROSSEL */}
+      {/* LISTA DE PONTOS EM CARROSSEL COM INFINITE SCROLL */}
       {pontos.length > 0 && (
-        <section className="overflow-x-auto">
+        <section
+          className="overflow-x-auto"
+          onScroll={(e) => {
+            const target = e.currentTarget;
+            if (
+              target.scrollLeft + target.clientWidth >=
+              target.scrollWidth - 50
+            ) {
+              carregarMais();
+            }
+          }}
+        >
           <div className="flex space-x-4 pb-4">
             {pontos.map((ponto, index) => (
               <Card
@@ -270,6 +299,9 @@ export function MapComponent() {
               </Card>
             ))}
           </div>
+          {loading && (
+            <p className="text-center text-gray-500">Carregando mais pontos...</p>
+          )}
         </section>
       )}
     </section>

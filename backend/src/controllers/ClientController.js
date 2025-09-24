@@ -2,7 +2,10 @@ import{
     createUser,
      getByEmail,
      createPonto,
-     listPontosCursor
+     listPontosCursor,
+     updateUsuario,
+     deleteUsuario,
+     findUsuarioById
 } from "../repositories/ClientRepository.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
@@ -47,6 +50,65 @@ export async function login (req,res,next){
         return res.json({user: safe, token});
     } catch (e) {next(e);}
 }
+
+
+export async function updateUser(req, res, next) {
+  try {
+    const { nome_usuarios, senha } = req.body;
+    const id = req.user.id; // vem do JWT
+
+    if (!nome_usuarios && !senha) {
+      return res.status(400).json({ error: "Informe nome ou senha para atualizar" });
+    }
+
+    const senhaHash = senha ? await bcrypt.hash(senha, 10) : null;
+
+    const updated = await updateUsuario({
+      id,
+      nome_usuarios: nome_usuarios ?? req.user.nome_usuarios,
+      senhaHash,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    res.json(updated);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deleteUser(req, res, next) {
+  try {
+    const { senha } = req.body;
+    const id = req.user.id;
+
+    if (!senha) {
+      return res.status(400).json({ error: "Senha é obrigatória para deletar a conta" });
+    }
+
+    // buscar usuário
+    const usuario = await findUsuarioById(id);
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // validar senha
+    const senhaOk = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaOk) {
+      return res.status(401).json({ error: "Senha incorreta" });
+    }
+
+    // deletar
+    await deleteUsuario(id);
+    res.json({ message: "Conta excluída com sucesso" });
+  } catch (e) {
+    next(e);
+  }
+}
+
+
 //---------------------------------------------------------------------------------
 // controllers do cadastro de pontos de coleta
 

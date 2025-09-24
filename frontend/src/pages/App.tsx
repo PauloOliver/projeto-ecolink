@@ -23,6 +23,7 @@ export default function App() {
           <Route path="/profile" element={<UserProfilePage />} />
           <Route path="/update" element={<UpdateUserForm />}></Route>
           <Route path="/delete" element={<DeleteUserForm />}></Route>
+          
         </Routes>
       <FooterComponent/>
     </div>
