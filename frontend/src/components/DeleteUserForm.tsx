@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Label, TextInput, Toast } from "flowbite-react";
 import { deleteUser } from "../services/auth"; // função que você criou no backend
+import backIcon from "../assets/icon_voltar.png";
 
 export default function DeleteUserForm() {
   const navigate = useNavigate();
@@ -33,14 +34,13 @@ export default function DeleteUserForm() {
 
   return (
     <div className="relative min-h-screen">
-      {/* fundo */}
       <div className="absolute inset-0 bg-[url('./assets/img-fundo.png')] bg-cover bg-center bg-no-repeat" />
       <div className="absolute inset-0 bg-green-900/30" />
 
-      {/* conteúdo */}
       <div className="relative min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur rounded-2xl shadow-lg">
-          <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+        
+          <h1 className="text-2xl font-bold text-center text-green-700 mb-6" style={{color: "#47D7AC"}}>
             Deletar Conta
           </h1>
 
@@ -63,7 +63,7 @@ export default function DeleteUserForm() {
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password1" style={{ color: "#047857" }}>
+                <Label htmlFor="password1" style={{ color: "#11111F" }}>
                   Senha
                 </Label>
               </div>
@@ -79,16 +79,18 @@ export default function DeleteUserForm() {
 
             <Button
               type="submit"
-              className="bg-green-600 hover:bg-green-700"
+              className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-gradient-to-r from-sky-400 to-emerald-600 
+                hover:opacity-90 focus:ring-4 focus:ring-sky-300 dark:focus:ring-emerald-900"
               disabled={loading}
             >
               {loading ? "Deletando..." : "Confirmar"}
             </Button>
           </form>
-
           <Link to="/profile">
-            <Button className="m-5 bg-green-600 hover:bg-green-700">
-              Voltar
+            <Button
+              className="p-2 bg-white rounded-full shadow-md hover:opacity-90 focus:ring-2 focus:ring-sky-300 mt-5"
+            >
+              <img src={backIcon} alt="Voltar" className="w-6 h-6" />
             </Button>
           </Link>
         </div>

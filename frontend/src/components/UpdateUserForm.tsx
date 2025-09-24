@@ -4,6 +4,7 @@ import { Button, Label, TextInput, Toast } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { getCurrentUser } from "../services/auth";
+import backIcon from "../assets/icon_voltar.png";
 
 export default function UpdateUserForm() {
   const navigate = useNavigate();
@@ -53,13 +54,12 @@ export default function UpdateUserForm() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Fundo */}
       <div className="absolute inset-0 bg-[url('./assets/img-fundo.png')] bg-cover bg-center bg-no-repeat" />
       <div className="absolute inset-0 bg-green-900/30" />
 
       <div className="relative min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur rounded-2xl shadow-lg">
-          <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+          <h1 className="text-2xl font-bold text-center text-green-700 mb-6" style={{color: "#47D7AC"}}>
             Atualizar Usuário
           </h1>
 
@@ -85,7 +85,7 @@ export default function UpdateUserForm() {
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="name1" style={{ color: "#047857" }}>
+                <Label htmlFor="name1" style={{ color: "#11111F" }}>
                   Nome
                 </Label>
               </div>
@@ -100,7 +100,7 @@ export default function UpdateUserForm() {
 
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password1" style={{ color: "#047857" }}>
+                <Label htmlFor="password1" style={{ color: "#11111F" }}>
                   Nova senha
                 </Label>
               </div>
@@ -113,14 +113,17 @@ export default function UpdateUserForm() {
               />
             </div>
 
-            <Button type="submit" className="bg-green-600 hover:bg-green-700">
+            <Button type="submit" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-gradient-to-r from-sky-400 to-emerald-600 
+                hover:opacity-90 focus:ring-4 focus:ring-sky-300 dark:focus:ring-emerald-900">
               Confirmar
             </Button>
           </form>
 
           <Link to="/profile">
-            <Button className="m-5 bg-green-600 hover:bg-green-700">
-              Voltar
+            <Button
+              className="p-2 bg-white rounded-full shadow-md hover:opacity-90 focus:ring-2 focus:ring-sky-300 mt-5  "
+            >
+              <img src={backIcon} alt="Voltar" className="w-6 h-6" />
             </Button>
           </Link>
         </div>

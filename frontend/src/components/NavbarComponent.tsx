@@ -47,7 +47,7 @@ export function NavbarComponent() {
     navigate("/login");
   }
 
-  const avatarSrc = user?.foto ?? "/src/assets/Steve-Jobs.jpg";
+  const avatarSrc = user?.foto ?? "/src/assets/foto_profile1.png";
 
   return (
     <Navbar fluid className="!bg-[#47D7AC]">
@@ -101,21 +101,21 @@ export function NavbarComponent() {
         <NavbarLink
           as={Link}
           to="/"
-          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition !text-white"
         >
           Home
         </NavbarLink>
         <NavbarLink
           as={Link}
           to="/map"
-          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition !text-white"
         >
           Mapa
         </NavbarLink>
         <NavbarLink
           as={Link}
           to="/social"
-          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition"
+          className="font-bold text-lg text-white hover:-translate-y-1 hover:scale-110 hover:bg-green-200 hover:underline transition !text-white"
         >
           Social
         </NavbarLink>

@@ -48,7 +48,7 @@ export default function LoginForm() {
 
       <div className="relative min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur rounded-2xl shadow-lg">
-          <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+          <h1 className="text-2xl font-bold text-center text-green-700 mb-6" style={{color: '#47D7AC'}}>
             Login
           </h1>
 
@@ -62,7 +62,7 @@ export default function LoginForm() {
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="email1" style={{ color: "#047857" }}>
+                <Label htmlFor="email1" style={{ color: "#11111F" }}>
                   Email
                 </Label>
               </div>
@@ -78,7 +78,7 @@ export default function LoginForm() {
 
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password1" style={{ color: "#047857" }}>
+                <Label htmlFor="password1" style={{ color: "#11111F" }}>
                   Senha
                 </Label>
               </div>
@@ -94,7 +94,7 @@ export default function LoginForm() {
 
             <div className="flex items-center gap-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember" style={{ color: "#047857" }}>
+              <Label htmlFor="remember" style={{ color: "#11111F" }}>
                 Lembre-me
               </Label>
             </div>
@@ -103,7 +103,9 @@ export default function LoginForm() {
 
             <Button
               type="submit"
-              className="bg-green-600 hover:bg-green-700"
+              className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg 
+                bg-gradient-to-r from-sky-400 to-emerald-600 
+                hover:opacity-90 focus:ring-4 focus:ring-sky-300 dark:focus:ring-emerald-900"
               disabled={loading}
             >
               {loading ? "Entrando..." : "Confirmar"}

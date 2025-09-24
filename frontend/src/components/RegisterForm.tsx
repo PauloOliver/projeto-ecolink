@@ -40,7 +40,7 @@ export default function RegisterForm() {
 
       <div className="relative min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur rounded-2xl shadow-lg">
-          <h1 className="text-2xl font-bold text-center text-green-700 mb-6">
+          <h1 className="text-2xl font-bold text-center text-green-700 mb-6" style={{ color: "#47D7AC" }}>
             Registrar
           </h1>
 
@@ -48,7 +48,7 @@ export default function RegisterForm() {
 
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <div>
-              <Label htmlFor="name1" style={{ color: "#047857" }}>
+              <Label htmlFor="name1" style={{ color: "#11111F" }}>
                 Nome
               </Label>
               <TextInput
@@ -62,7 +62,7 @@ export default function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="email1" style={{ color: "#047857" }}>
+              <Label htmlFor="email1" style={{ color: "#11111F" }}>
                 Email
               </Label>
               <TextInput
@@ -76,7 +76,7 @@ export default function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="password1" style={{ color: "#047857" }}>
+              <Label htmlFor="password1" style={{ color: "#11111F" }}>
                 Senha
               </Label>
               <TextInput
@@ -90,7 +90,7 @@ export default function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="password2" style={{ color: "#047857" }}>
+              <Label htmlFor="password2" style={{ color: "#11111F" }}>
                 Confirmação de senha
               </Label>
               <TextInput
@@ -105,7 +105,9 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
-              className="bg-green-600 hover:bg-green-700"
+              className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg 
+                bg-gradient-to-r from-sky-400 to-emerald-600 
+                hover:opacity-90 focus:ring-4 focus:ring-sky-300 dark:focus:ring-emerald-900 mt-5"
               disabled={loading}
             >
               {loading ? "Registrando..." : "Confirmar"}
