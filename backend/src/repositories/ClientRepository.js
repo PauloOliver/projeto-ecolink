@@ -17,6 +17,31 @@ export async function getByEmail(email) {
   return rows[0] || null;
   
 }
+// Buscar usuário pelo ID (para validar senha no delete)
+export async function findUsuarioById(id) {
+  const sql = `SELECT * FROM tb_usuarios WHERE id_usuarios = $1`;
+  const { rows } = await dbQuery(sql, [id]);
+  return rows[0];
+}
+
+export async function updateUsuario({ id, nome_usuarios, senhaHash }) {
+  const sql = `
+    UPDATE tb_usuarios
+    SET nome_usuarios = $1,
+        senha = COALESCE($2, senha)
+    WHERE id_usuarios = $3
+    RETURNING id_usuarios, nome_usuarios, email
+  `;
+  const values = [nome_usuarios, senhaHash, id];
+  const { rows } = await dbQuery(sql, values);
+  return rows[0];
+}
+export async function deleteUsuario(id) {
+  const sql = `DELETE FROM tb_usuarios WHERE id_usuarios = $1 RETURNING id_usuarios;`;
+  const { rows } = await dbQuery(sql, [id]);
+  return rows[0];
+}
+
 
 
 export async function createPonto({

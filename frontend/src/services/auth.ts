@@ -55,3 +55,21 @@ export function getCurrentUser(): User | null {
 export function getToken(): string | null {
   return localStorage.getItem("token");
 }
+
+
+export async function deleteUser(senha: string) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Usuário não autenticado");
+
+  const res = await api.delete("/usuarios", {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { senha }, // body enviado no delete
+  });
+
+  // Se der certo, limpa localStorage
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.dispatchEvent(new Event("auth-changed"));
+
+  return res.data;
+}

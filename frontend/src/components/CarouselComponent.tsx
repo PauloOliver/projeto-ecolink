@@ -13,7 +13,7 @@ const customTheme = {
 export function CarouselComponent() {
   return (
     <div className="m-6 px-4 h-[80vh] w-[90vw] justify-center">
-      <Carousel slideInterval={800} theme={customTheme}>
+      <Carousel slideInterval={2500} theme={customTheme}>
         <img src={img1} alt="..." />
         <img src={img2} alt="..." />
         <img src={img3} alt="..." />

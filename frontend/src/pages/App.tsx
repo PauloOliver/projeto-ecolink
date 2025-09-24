@@ -19,6 +19,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+
       {!shouldHideLayout && <NavbarComponent />}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/delete" element={<DeleteUserForm />} />
       </Routes>
       {!shouldHideLayout && <FooterComponent />}
+
     </div>
   );
 }
