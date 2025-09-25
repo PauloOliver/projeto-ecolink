@@ -1,13 +1,10 @@
-// backend/test/teste.test.js
 import { test, assert, startScript, envFile } from 'poku';
 import quibble from 'quibble';
 
-// 0) Carrega o .env de teste
 await envFile('.env.test');
 const port = Number(process.env.PORT || 4000);
 const baseURL = `http://localhost:${port}`;
 
-// 1) Smoke: servidor sobe e responde GET /
 test('server UP responde GET / com 200 e {server:"OK"}', async () => {
   const srv = await startScript('start', {
     startAfter: 'Servidor rodando',
@@ -24,7 +21,6 @@ test('server UP responde GET / com 200 e {server:"OK"}', async () => {
   }
 });
 
-// 2) Auth guard: rota protegida recusa sem token
 test('POST /api/v1/pontos sem token deve falhar (auth guard ativo)', async () => {
   const srv = await startScript('start', {
     startAfter: 'Servidor rodando',
@@ -43,18 +39,12 @@ test('POST /api/v1/pontos sem token deve falhar (auth guard ativo)', async () =>
   }
 });
 
-// 3) Unitário (mock de DB) para o ClientRepository
-//    - testa getByEmail
-//    - testa listPontosCursor (hasMore/nextCursor)
 test('ClientRepository com DB mockado (getByEmail e listPontosCursor)', async () => {
-  // Mocka o módulo de conexão do DB ANTES de importar o repositório
-  // Caminhos relativos ao arquivo atual: test/ -> src/
+
   await quibble.esm('../src/database/connection.js', {
-    // Simula dbQuery retornando "rows" conforme a consulta
     dbQuery: async (sql, params = []) => {
       const q = String(sql).toLowerCase();
 
-      // Ramo para getByEmail
       if (q.includes('from tb_usuarios') && q.includes('where lower(email)')) {
         const email = (params[0] || '').toString().toLowerCase();
         if (email === 'a@b.com') {
@@ -65,9 +55,7 @@ test('ClientRepository com DB mockado (getByEmail e listPontosCursor)', async ()
         return { rows: [] };
       }
 
-      // Ramo para listPontosCursor (retorna 3 itens para simular hasMore com limit=2)
       if (q.includes('from tb_pontos_coleta') && q.includes('join tb_usuarios')) {
-        // Vamos retornar id_localizacao 30, 29, 28 (desc) para testar cursor/hasMore
         return {
           rows: [
             { id_localizacao: 30, tb_usuarios_id_usuarios: 10, usuario_id: 10, usuario_nome: 'User' },
@@ -77,28 +65,22 @@ test('ClientRepository com DB mockado (getByEmail e listPontosCursor)', async ()
         };
       }
 
-      // Default (para outras queries que não estamos testando aqui)
       return { rows: [] };
     }
   });
 
-  // Importa o repositório só depois do mock
   const repo = await import('../src/repositories/ClientRepository.js');
 
-  // --- getByEmail: quando encontra
   const u1 = await repo.getByEmail('a@b.com');
   assert.ok(u1 && u1.id_usuarios === 1, 'getByEmail deve retornar usuário');
 
-  // --- getByEmail: quando não encontra
   const u2 = await repo.getByEmail('naoexiste@dominio.com');
   assert.strictEqual(u2, null, 'getByEmail deve retornar null quando não encontra');
 
-  // --- listPontosCursor: limit=2 deve vir hasMore=true e nextCursor = id do 2º item da página
   const { items, nextCursor, hasMore } = await repo.listPontosCursor({ limit: 2 });
   assert.strictEqual(items.length, 2, 'items deve respeitar o limit');
   assert.strictEqual(hasMore, true, 'hasMore deve ser true quando há mais registros');
   assert.strictEqual(nextCursor, items[items.length - 1].id_localizacao, 'nextCursor deve ser último id da página');
 
-  // Limpa mocks
   await quibble.reset();
 });
