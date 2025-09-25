@@ -9,7 +9,6 @@ import {
 } from "react-icons/bs";
 import { useState } from "react";
 
-// O modelo que vem do backend
 export type FeedPostModel = {
   id_posts: number;
   usuario_nome: string;
@@ -39,7 +38,6 @@ export function FeedPost({ post }: Props) {
 
   return (
     <li className="post w-full">
-      {/* Cabeçalho do post */}
       <div className="infoUserPost mb-3">
         <div className="nameAndHour flex items-center gap-2">
           <BsPersonCircle size={22} />
@@ -50,34 +48,22 @@ export function FeedPost({ post }: Props) {
         </div>
       </div>
 
-      {/* Imagem */}
       {Media}
 
-      {/* Botões de ação */}
       <div className="mt-3 flex items-center">
         <button
           className="p-2 -ml-2 hover:opacity-80 active:scale-95 transition"
           aria-label="Curtir"
           onClick={() => setLiked((v) => !v)}
         >
-          {liked ? (
-            <BsHeartFill size={26} className="text-red-500" />
-          ) : (
-            <BsHeart size={26} />
-          )}
+          {liked ? <BsHeartFill size={26} className="text-red-500" /> : <BsHeart size={26} />}
         </button>
 
-        <button
-          className="p-2 hover:opacity-80 active:scale-95 transition"
-          aria-label="Comentar"
-        >
+        <button className="p-2 hover:opacity-80 active:scale-95 transition" aria-label="Comentar">
           <BsChatDots size={24} />
         </button>
 
-        <button
-          className="p-2 hover:opacity-80 active:scale-95 transition"
-          aria-label="Enviar"
-        >
+        <button className="p-2 hover:opacity-80 active:scale-95 transition" aria-label="Enviar">
           <BsSend size={24} />
         </button>
 
@@ -90,10 +76,7 @@ export function FeedPost({ post }: Props) {
         </button>
       </div>
 
-      {/* Legenda */}
-      {post.conteudo_txt && (
-        <p className="legenda mt-1 break-words">{post.conteudo_txt}</p>
-      )}
+      {post.conteudo_txt && <p className="legenda mt-1 break-words">{post.conteudo_txt}</p>}
     </li>
   );
 }
