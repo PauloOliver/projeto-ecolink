@@ -1,6 +1,6 @@
 import { dbQuery } from "../database/connection.js";
 
-export async function createUser ({nome_usuarios, senhaHash, email, foto = null, perfil = nulll}){
+export async function createUser ({nome_usuarios, senhaHash, email, foto = null, perfil = null}){
     const sql = `
       INSERT INTO tb_usuarios (nome_usuarios, senha, email, foto, perfil)
       VALUES ($1, $2, $3, $4, $5)
@@ -27,7 +27,7 @@ export async function findUsuarioById(id) {
 export async function updateUsuario({ id, nome_usuarios, senhaHash }) {
   const sql = `
     UPDATE tb_usuarios
-    SET nome_usuarios = $1,
+      SET nome_usuarios = COALESCE($1, nome_usuarios),
         senha = COALESCE($2, senha)
     WHERE id_usuarios = $3
     RETURNING id_usuarios, nome_usuarios, email
