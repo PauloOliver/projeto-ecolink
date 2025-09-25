@@ -15,55 +15,113 @@ export default function SocialPage() {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const pendingFileRef = useRef<File | null>(null);
 
+  const API_URL = "http://localhost:3000/api/v1";
+  const FILES_BASE_URL = "http://localhost:3000";
+
+  function normalizePost(p: FeedPostModel): FeedPostModel {
+    return {
+      ...p,
+      conteudo_foto: p.conteudo_foto
+        ? `${FILES_BASE_URL}${p.conteudo_foto}`
+        : null,
+    };
+  }
+
+  // Buscar posts do backend
   async function fetchPosts(next?: string | null) {
     if (loading || (!hasMore && !next)) return;
     setLoading(true);
-    const url = next ? `/api/posts?cursor=${encodeURIComponent(next)}` : `/api/posts`;
-    const r = await fetch(url);
+
+    const url = next
+      ? `${API_URL}/posts?cursor=${encodeURIComponent(next)}`
+      : `${API_URL}/posts`;
+
+    const r = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
+      },
+    });
+
+    if (!r.ok) {
+      console.error("Erro ao buscar posts");
+      setLoading(false);
+      return;
+    }
+
     const data: PageResp = await r.json();
-    setPosts((prev) => [...prev, ...(data.items || [])]);
+    const mapped = data.items.map(normalizePost);
+
+    setPosts((prev) => {
+      const all = [...prev, ...mapped];
+      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
+    });
+
     setCursor(data.nextCursor ?? null);
     setHasMore(Boolean(data.nextCursor));
     setLoading(false);
   }
 
-  useEffect(() => { fetchPosts(null); }, []);
+  // Primeira carga
+  useEffect(() => {
+    fetchPosts(null);
+  }, []);
 
-  function openImagePicker() { fileRef.current?.click(); }
+  // Abrir seletor de imagem
+  function openImagePicker() {
+    fileRef.current?.click();
+  }
 
+  // Preview local (antes de enviar ao backend)
   function handleLocalPreviewAndQueue(file: File) {
     pendingFileRef.current = file;
     const url = URL.createObjectURL(file);
+
     const novo: FeedPostModel = {
-      id: `local-${Date.now()}`,
-      authorName: "Você",
-      timeLabel: "agora",
-      caption: captionText.trim() || undefined,
-      imageUrl: url,
+      id_posts: Date.now(), // temporário
+      usuario_nome: "Você",
+      data: new Date().toISOString(),
+      conteudo_txt: captionText.trim() || null,
+      conteudo_foto: url,
     };
-    setPosts((prev) => [novo, ...prev]);
+
+    setPosts((prev) => {
+      const all = [novo, ...prev];
+      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
+    });
     setCaptionText("");
   }
 
+  // Publicar post (texto + imagem)
   async function publish() {
     const form = new FormData();
-    const text = captionText.trim();
-    if (text) form.append("caption", text);
-    if (pendingFileRef.current) form.append("file", pendingFileRef.current);
-    if (!text && !pendingFileRef.current) return;
+    if (captionText.trim()) form.append("conteudo_txt", captionText.trim());
+    if (pendingFileRef.current)
+      form.append("conteudo_foto", pendingFileRef.current);
+
+    if (!captionText.trim() && !pendingFileRef.current) return;
 
     setCaptionText("");
     const hadFile = pendingFileRef.current != null;
     pendingFileRef.current = null;
 
-    const r = await fetch("/api/posts", { method: "POST", body: form });
-    const created: FeedPostModel = await r.json();
+    const r = await fetch(`${API_URL}/posts`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
+      },
+      body: form,
+    });
+
+    if (!r.ok) {
+      console.error("Erro ao criar post");
+      return;
+    }
+
+    const created: FeedPostModel = normalizePost(await r.json());
+
     setPosts((prev) => {
-      if (hadFile) {
-        const i = prev.findIndex((p) => String(p.id).startsWith("local-"));
-        if (i >= 0) { const c = prev.slice(); c[i] = created; return c; }
-      }
-      return [created, ...prev];
+      const all = [created, ...prev];
+      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
     });
   }
 
@@ -77,8 +135,11 @@ export default function SocialPage() {
 
       <main className="px-4 py-6 md:ml-64 lg:ml-72 lg:mr-[22rem]">
         <div className="max-w-none lg:max-w-2xl lg:mx-auto">
+          {/* Criar post */}
           <div className="mb-6 rounded-lg bg-white shadow p-4">
-            <label htmlFor="caption" className="block text-sm font-medium mb-2">Legenda do post</label>
+            <label htmlFor="caption" className="block text-sm font-medium mb-2">
+              Legenda do post
+            </label>
             <input
               id="caption"
               type="text"
@@ -88,22 +149,37 @@ export default function SocialPage() {
               className="w-full rounded border px-3 py-2 outline-none focus:ring"
             />
             <div className="mt-3 flex items-center gap-2 justify-end">
-              <button onClick={publish} className="rounded bg-emerald-700 px-4 py-2 text-white disabled:opacity-50" disabled={!captionText.trim() && !pendingFileRef.current}>
+              <button
+                onClick={publish}
+                className="rounded bg-emerald-700 px-4 py-2 text-white disabled:opacity-50"
+                disabled={!captionText.trim() && !pendingFileRef.current}
+              >
                 Publicar
               </button>
-              <button onClick={openImagePicker} className="rounded bg-emerald-600 px-4 py-2 text-white">
+              <button
+                onClick={openImagePicker}
+                className="rounded bg-emerald-600 px-4 py-2 text-white"
+              >
                 Selecionar imagem
               </button>
             </div>
           </div>
 
+          {/* Listagem dos posts */}
           <ul className="space-y-8">
-            {posts.map((p) => (<FeedPost key={p.id} post={p} />))}
+            {posts.map((p) => (
+              <FeedPost key={p.id_posts} post={p} />
+            ))}
           </ul>
 
+          {/* Paginação */}
           <div className="mt-6 flex justify-center">
             {hasMore ? (
-              <button onClick={() => fetchPosts(cursor)} className="rounded bg-emerald-600 px-4 py-2 text-white disabled:opacity-50" disabled={loading}>
+              <button
+                onClick={() => fetchPosts(cursor)}
+                className="rounded bg-emerald-600 px-4 py-2 text-white disabled:opacity-50"
+                disabled={loading}
+              >
                 {loading ? "Carregando..." : "Carregar mais"}
               </button>
             ) : (

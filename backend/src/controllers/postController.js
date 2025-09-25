@@ -1,16 +1,17 @@
-import { createPost, listPosts } from "../repositories/postRepository.js";
+// src/controllers/PostController.js
+import { createPostRepo, listPostsCursor}  from "../repositories/postRepository.js"
 
-export async function postCreate(req, res, next) {
+export async function createPost(req, res, next) {
   try {
-    const { conteudo_txt, conteudo_foto } = req.body;
-    if (!conteudo_txt && !conteudo_foto) {
-      return res.status(400).json({ error: "O post precisa de texto ou foto" });
-    }
+    const userId = req.user.id; // do JWT
+    const { conteudo_txt } = req.body;
+    console.log("req.file:", req.file);
+    const foto = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const post = await createPost({
+    const post = await createPostRepo({
       conteudo_txt,
-      conteudo_foto,
-      userId: req.user.id, // vem do JWT
+      conteudo_foto: foto,
+      userId,
     });
 
     res.status(201).json(post);
@@ -21,8 +22,11 @@ export async function postCreate(req, res, next) {
 
 export async function getPosts(req, res, next) {
   try {
-    const { limit = 10, offset = 0 } = req.query;
-    const posts = await listPosts(limit, offset);
+    const { cursor, limit } = req.query;
+    const posts = await listPostsCursor({
+      cursor: cursor ? Number(cursor) : null,
+      limit: limit ? Number(limit) : 10
+    });
     res.json(posts);
   } catch (err) {
     next(err);

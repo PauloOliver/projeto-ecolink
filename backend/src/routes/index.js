@@ -2,8 +2,8 @@ import { Router } from "express";
 import {  createUsuario, login, postPonto, getPontos,updateUser,deleteUser} from "../controllers/ClientController.js";
 import { dbPing } from "../controllers/HealthController.js";
 import { auth } from "../middlewares/auth.js";
-import { postCreate, getPosts } from "../controllers/postController.js";
-import { comentarioCreate, getComentarios } from "../controllers/comentarioController.js";
+import { createPost, getPosts} from "../controllers/postController.js";
+import  upload  from "../middlewares/upload.js";
 
 const clientesRoutes = Router()
 
@@ -20,11 +20,9 @@ clientesRoutes.post("/pontos", auth, postPonto)
 clientesRoutes.get("/pontos", getPontos)
 
 // posts
-clientesRoutes.post("/posts", auth, postCreate);
+clientesRoutes.post("/posts", auth, upload.single("conteudo_foto"), createPost);
 clientesRoutes.get("/posts", getPosts);
 
-// comentários
-clientesRoutes.post("/comentarios", auth, comentarioCreate);
-clientesRoutes.get("/comentarios/:postId", getComentarios);
+
 
 export default clientesRoutes
