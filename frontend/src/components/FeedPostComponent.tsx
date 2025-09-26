@@ -24,6 +24,7 @@ export function FeedPost({ post }: Props) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Renderiza mídia (somente se veio do backend)
   const Media = post.conteudo_foto ? (
     <div className="relative w-full overflow-hidden rounded-lg bg-gray-100">
       <div className="aspect-[4/5] md:aspect-[4/3] max-h-[70vh]">
@@ -50,10 +51,10 @@ export function FeedPost({ post }: Props) {
         </div>
       </div>
 
-      {/* Imagem */}
+      {/* Imagem (quando existir) */}
       {Media}
 
-      {/* Botões de ação */}
+      {/* Botões de ação (placeholders, sem backend por enquanto) */}
       <div className="mt-3 flex items-center">
         <button
           className="p-2 -ml-2 hover:opacity-80 active:scale-95 transition"

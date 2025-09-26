@@ -84,7 +84,13 @@ export function MapComponent() {
         cursor,
       });
 
-      setPontos((prev) => [...prev, ...items]);
+      // evita duplicatas
+      setPontos((prev) => {
+        const ids = new Set(prev.map((p) => p.id_localizacao));
+        const novos = items.filter((p) => !ids.has(p.id_localizacao));
+        return [...prev, ...novos];
+      });
+
       setCursor(next_cursor ?? null);
       setHasMore(!!next_cursor);
     } catch (err) {
@@ -115,8 +121,13 @@ export function MapComponent() {
         observacoes: formData.observacoes,
       });
 
-      // novo ponto aparece no início da lista
-      setPontos((prev) => [novo, ...prev]);
+      // insere o novo no topo e evita duplicação
+      setPontos((prev) => {
+        const semDuplicados = prev.filter(
+          (p) => p.id_localizacao !== novo.id_localizacao
+        );
+        return [novo, ...semDuplicados];
+      });
 
       setFormData({
         tipo: "",
@@ -257,7 +268,7 @@ export function MapComponent() {
         </form>
       </div>
 
-      {/* LISTA DE PONTOS EM CARROSSEL COM INFINITE SCROLL */}
+      {/* LISTA DE PONTOS */}
       {pontos.length > 0 && (
         <section
           className="overflow-x-auto"
@@ -272,9 +283,9 @@ export function MapComponent() {
           }}
         >
           <div className="flex space-x-4 pb-4">
-            {pontos.map((ponto, index) => (
+            {pontos.map((ponto) => (
               <Card
-                key={index}
+                key={ponto.id_localizacao}
                 className="min-w-[250px] max-w-xs border-green-300 shadow-md flex-shrink-0"
               >
                 <h5 className="text-lg font-bold text-green-700">
@@ -300,7 +311,9 @@ export function MapComponent() {
             ))}
           </div>
           {loading && (
-            <p className="text-center text-gray-500">Carregando mais pontos...</p>
+            <p className="text-center text-gray-500">
+              Carregando mais pontos...
+            </p>
           )}
         </section>
       )}
