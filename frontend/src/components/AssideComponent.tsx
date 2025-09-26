@@ -1,4 +1,5 @@
 import { useState } from "react";
+import profile_picture from "../assets/foto_profile.png"
 
 type Suggestion = {
   id: number;
@@ -8,12 +9,12 @@ type Suggestion = {
 };
 
 const initialSuggestions: Suggestion[] = [
-  { id: 1, name: "Glyden Beloni", avatar: "imagensRSocial/person1.jpg" },
-  { id: 2, name: "João Gabriel", avatar: "imagensRSocial/person2.jpg" },
-  { id: 3, name: "Gabriel Gorito", avatar: "imagensRSocial/person3.jpg" },
-  { id: 4, name: "Paulo Vitor", avatar: "imagensRSocial/person4.jpg" },
-  { id: 5, name: "Arthur Alcides", avatar: "imagensRSocial/person5.jpg" },
-  { id: 6, name: "Guilherme Vicente", avatar: "imagensRSocial/person6.jpg" },
+  { id: 1, name: "Glyden Beloni", avatar: profile_picture },
+  { id: 2, name: "João Gabriel", avatar: profile_picture },
+  { id: 3, name: "Gabriel Gorito", avatar: profile_picture },
+  { id: 4, name: "Paulo Vitor", avatar: profile_picture },
+  { id: 5, name: "Arthur Alcides", avatar: profile_picture },
+  { id: 6, name: "Guilherme Vicente", avatar: profile_picture },
 ];
 
 export default function AssideComponent() {
