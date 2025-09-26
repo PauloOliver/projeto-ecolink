@@ -1,3 +1,4 @@
+// src/pages/SocialPage.tsx
 import { useEffect, useRef, useState } from "react";
 import ComponentSideBar from "../components/ComponentSideBar";
 import AssideComponent from "../components/AssideComponent";
@@ -10,6 +11,7 @@ export default function SocialPage() {
   const [posts, setPosts] = useState<FeedPostModel[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [publishing, setPublishing] = useState(false); // <- trava anti-duplo clique
   const [hasMore, setHasMore] = useState(true);
 
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -18,13 +20,24 @@ export default function SocialPage() {
   const API_URL = "http://localhost:3000/api/v1";
   const FILES_BASE_URL = "http://localhost:3000";
 
-  function normalizePost(p: FeedPostModel): FeedPostModel {
-    return {
-      ...p,
-      conteudo_foto: p.conteudo_foto
-        ? `${FILES_BASE_URL}${p.conteudo_foto}`
-        : null,
-    };
+  // normaliza a URL da imagem vinda do back
+  const normalizePost = (p: FeedPostModel): FeedPostModel => ({
+    ...p,
+    conteudo_foto: p.conteudo_foto ? `${FILES_BASE_URL}${p.conteudo_foto}` : null,
+  });
+
+  // dedup por id_posts (evita duplicados em merges)
+  function dedupeById(list: FeedPostModel[]) {
+    const seen = new Set<number>();
+    const out: FeedPostModel[] = [];
+    for (const item of list) {
+      const id = Number(item.id_posts);
+      if (!seen.has(id)) {
+        seen.add(id);
+        out.push(item);
+      }
+    }
+    return out;
   }
 
   // Buscar posts do backend
@@ -37,9 +50,7 @@ export default function SocialPage() {
       : `${API_URL}/posts`;
 
     const r = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
-      },
+      headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
     });
 
     if (!r.ok) {
@@ -51,78 +62,59 @@ export default function SocialPage() {
     const data: PageResp = await r.json();
     const mapped = data.items.map(normalizePost);
 
-    setPosts((prev) => {
-      const all = [...prev, ...mapped];
-      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
-    });
-
+    // merge + dedupe, mantendo a ordem (backend já vem DESC)
+    setPosts(prev => dedupeById([...prev, ...mapped]));
     setCursor(data.nextCursor ?? null);
     setHasMore(Boolean(data.nextCursor));
     setLoading(false);
   }
 
   // Primeira carga
-  useEffect(() => {
-    fetchPosts(null);
-  }, []);
+  useEffect(() => { fetchPosts(null); }, []);
 
   // Abrir seletor de imagem
   function openImagePicker() {
     fileRef.current?.click();
   }
 
-  // Preview local (antes de enviar ao backend)
-  function handleLocalPreviewAndQueue(file: File) {
+  // Apenas guarda o file (NÃO adiciona preview local à lista)
+  function onPickFile(file: File) {
     pendingFileRef.current = file;
-    const url = URL.createObjectURL(file);
-
-    const novo: FeedPostModel = {
-      id_posts: Date.now(), // temporário
-      usuario_nome: "Você",
-      data: new Date().toISOString(),
-      conteudo_txt: captionText.trim() || null,
-      conteudo_foto: url,
-    };
-
-    setPosts((prev) => {
-      const all = [novo, ...prev];
-      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
-    });
-    setCaptionText("");
   }
 
   // Publicar post (texto + imagem)
   async function publish() {
-    const form = new FormData();
-    if (captionText.trim()) form.append("conteudo_txt", captionText.trim());
-    if (pendingFileRef.current)
-      form.append("conteudo_foto", pendingFileRef.current);
-
+    if (publishing) return;         // evita duplo clique
     if (!captionText.trim() && !pendingFileRef.current) return;
 
-    setCaptionText("");
-    const hadFile = pendingFileRef.current != null;
-    pendingFileRef.current = null;
+    setPublishing(true);
 
-    const r = await fetch(`${API_URL}/posts`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
-      },
-      body: form,
-    });
+    try {
+      const form = new FormData();
+      if (captionText.trim()) form.append("conteudo_txt", captionText.trim());
+      if (pendingFileRef.current) form.append("conteudo_foto", pendingFileRef.current);
 
-    if (!r.ok) {
-      console.error("Erro ao criar post");
-      return;
+      const r = await fetch(`${API_URL}/posts`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
+        body: form,
+      });
+
+      if (!r.ok) {
+        console.error("Erro ao criar post");
+        return;
+      }
+
+      const created: FeedPostModel = normalizePost(await r.json());
+
+      // coloca o novo post no TOPO e remove duplicados
+      setPosts(prev => dedupeById([created, ...prev]));
+      setCaptionText("");
+      pendingFileRef.current = null;
+      if (fileRef.current) fileRef.current.value = "";
+    } finally {
+      setPublishing(false);
     }
-
-    const created: FeedPostModel = normalizePost(await r.json());
-
-    setPosts((prev) => {
-      const all = [created, ...prev];
-      return all.sort((a, b) => Number(b.id_posts) - Number(a.id_posts));
-    });
   }
 
   return (
@@ -152,9 +144,9 @@ export default function SocialPage() {
               <button
                 onClick={publish}
                 className="rounded bg-emerald-700 px-4 py-2 text-white disabled:opacity-50"
-                disabled={!captionText.trim() && !pendingFileRef.current}
+                disabled={publishing || (!captionText.trim() && !pendingFileRef.current)}
               >
-                Publicar
+                {publishing ? "Publicando..." : "Publicar"}
               </button>
               <button
                 onClick={openImagePicker}
@@ -165,11 +157,9 @@ export default function SocialPage() {
             </div>
           </div>
 
-          {/* Listagem dos posts */}
+          {/* Lista de posts */}
           <ul className="space-y-8">
-            {posts.map((p) => (
-              <FeedPost key={p.id_posts} post={p} />
-            ))}
+            {posts.map((p) => (<FeedPost key={p.id_posts} post={p} />))}
           </ul>
 
           {/* Paginação */}
@@ -189,6 +179,7 @@ export default function SocialPage() {
         </div>
       </main>
 
+      {/* Input de arquivo oculto */}
       <input
         ref={fileRef}
         type="file"
@@ -196,8 +187,9 @@ export default function SocialPage() {
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) handleLocalPreviewAndQueue(file);
-          e.currentTarget.value = "";
+          if (file) onPickFile(file);
+          // limpa o input pra permitir escolher a mesma imagem novamente
+          if (fileRef.current) fileRef.current.value = "";
         }}
       />
     </div>
