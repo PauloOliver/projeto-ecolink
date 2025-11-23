@@ -1,4 +1,3 @@
-// src/pages/SocialPage.tsx
 import { useEffect, useRef, useState } from "react";
 import ComponentSideBar from "../components/ComponentSideBar";
 import AssideComponent from "../components/AssideComponent";
@@ -11,22 +10,26 @@ export default function SocialPage() {
   const [posts, setPosts] = useState<FeedPostModel[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [publishing, setPublishing] = useState(false); // <- trava anti-duplo clique
+  const [publishing, setPublishing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
   const fileRef = useRef<HTMLInputElement | null>(null);
   const pendingFileRef = useRef<File | null>(null);
 
-  const API_URL = "http://localhost:3000/api/v1";
-  const FILES_BASE_URL = "http://localhost:3000";
+  const API_URL =
+    import.meta.env.VITE_API_URL || `${window.location.origin}/api/v1`;
+  const FILES_BASE_URL =
+    import.meta.env.VITE_FILES_BASE_URL || window.location.origin;
 
-  // normaliza a URL da imagem vinda do back
-  const normalizePost = (p: FeedPostModel): FeedPostModel => ({
-    ...p,
-    conteudo_foto: p.conteudo_foto ? `${FILES_BASE_URL}${p.conteudo_foto}` : null,
-  });
+  const normalizePost = (p: FeedPostModel): FeedPostModel => {
+    const foto = p.conteudo_foto ?? null;
+    if (!foto) return { ...p, conteudo_foto: null };
+    if (/^https?:\/\//i.test(foto)) return { ...p, conteudo_foto: foto };
+    const base = FILES_BASE_URL.endsWith("/") ? FILES_BASE_URL : FILES_BASE_URL + "/";
+    const rel = foto.startsWith("/") ? foto.slice(1) : foto;
+    return { ...p, conteudo_foto: base + rel };
+  };
 
-  // dedup por id_posts (evita duplicados em merges)
   function dedupeById(list: FeedPostModel[]) {
     const seen = new Set<number>();
     const out: FeedPostModel[] = [];
@@ -40,7 +43,6 @@ export default function SocialPage() {
     return out;
   }
 
-  // Buscar posts do backend
   async function fetchPosts(next?: string | null) {
     if (loading || (!hasMore && !next)) return;
     setLoading(true);
@@ -54,7 +56,6 @@ export default function SocialPage() {
     });
 
     if (!r.ok) {
-      console.error("Erro ao buscar posts");
       setLoading(false);
       return;
     }
@@ -62,60 +63,50 @@ export default function SocialPage() {
     const data: PageResp = await r.json();
     const mapped = data.items.map(normalizePost);
 
-    // merge + dedupe, mantendo a ordem (backend já vem DESC)
     setPosts(prev => dedupeById([...prev, ...mapped]));
     setCursor(data.nextCursor ?? null);
     setHasMore(Boolean(data.nextCursor));
     setLoading(false);
   }
 
-  // Primeira carga
   useEffect(() => { fetchPosts(null); }, []);
 
-  // Abrir seletor de imagem
   function openImagePicker() {
     fileRef.current?.click();
   }
 
-  // Apenas guarda o file (NÃO adiciona preview local à lista)
   function onPickFile(file: File) {
     pendingFileRef.current = file;
   }
 
-  // Publicar post (texto + imagem)
   async function publish() {
-    if (publishing) return;         // evita duplo clique
-    if (!captionText.trim() && !pendingFileRef.current) return;
+  if (publishing) return;
+  const text = captionText.trim();
+  if (!text) return;
 
-    setPublishing(true);
+  setPublishing(true);
+  try {
+    const r = await fetch(`${API_URL}/posts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`
+      },
+      body: JSON.stringify({ conteudo_txt: text })
+    });
 
-    try {
-      const form = new FormData();
-      if (captionText.trim()) form.append("conteudo_txt", captionText.trim());
-      if (pendingFileRef.current) form.append("conteudo_foto", pendingFileRef.current);
+    if (!r.ok) return;
 
-      const r = await fetch(`${API_URL}/posts`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
-        body: form,
-      });
-
-      if (!r.ok) {
-        console.error("Erro ao criar post");
-        return;
-      }
-
-      const created: FeedPostModel = normalizePost(await r.json());
-
-      // coloca o novo post no TOPO e remove duplicados
-      setPosts(prev => dedupeById([created, ...prev]));
-      setCaptionText("");
-      pendingFileRef.current = null;
-      if (fileRef.current) fileRef.current.value = "";
-    } finally {
-      setPublishing(false);
-    }
+    const created: FeedPostModel = normalizePost(await r.json());
+    setPosts((prev) => [created, ...prev]);
+    setCaptionText("");
+    pendingFileRef.current = null;
+    if (fileRef.current) fileRef.current.value = "";
+  } finally {
+    setPublishing(false);
   }
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -127,7 +118,6 @@ export default function SocialPage() {
 
       <main className="px-4 py-6 md:ml-64 lg:ml-72 lg:mr-[22rem]">
         <div className="max-w-none lg:max-w-2xl lg:mx-auto">
-          {/* Criar post */}
           <div className="mb-6 rounded-lg bg-white shadow p-4">
             <label htmlFor="caption" className="block text-sm font-medium mb-2">
               Legenda do post
@@ -157,12 +147,10 @@ export default function SocialPage() {
             </div>
           </div>
 
-          {/* Lista de posts */}
           <ul className="space-y-8">
             {posts.map((p) => (<FeedPost key={p.id_posts} post={p} />))}
           </ul>
 
-          {/* Paginação */}
           <div className="mt-6 flex justify-center">
             {hasMore ? (
               <button
@@ -179,7 +167,6 @@ export default function SocialPage() {
         </div>
       </main>
 
-      {/* Input de arquivo oculto */}
       <input
         ref={fileRef}
         type="file"
@@ -188,7 +175,6 @@ export default function SocialPage() {
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) onPickFile(file);
-          // limpa o input pra permitir escolher a mesma imagem novamente
           if (fileRef.current) fileRef.current.value = "";
         }}
       />

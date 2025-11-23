@@ -1,4 +1,3 @@
-// src/components/NavbarComponent.tsx
 import {
   Avatar,
   Dropdown,
@@ -13,9 +12,11 @@ import {
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getCurrentUser, logout } from "../services/auth"; // helpers
+import logo from "../assets/logo_EcoLink.png";
+import defaultAvatar from "../assets/foto_profile1.png";
 
-// Tipo de usuário (mesmo que você usa no auth.ts)
+import { getCurrentUser, logout } from "../services/auth";
+
 type User = {
   id_usuarios: number;
   nome_usuarios: string;
@@ -27,7 +28,6 @@ export function NavbarComponent() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
-  // Carrega usuário ao montar e atualiza em login/logout
   useEffect(() => {
     setUser(getCurrentUser());
 
@@ -47,13 +47,13 @@ export function NavbarComponent() {
     navigate("/login");
   }
 
-  const avatarSrc = user?.foto ?? "/src/assets/foto_profile1.png";
+  const avatarSrc = user?.foto || defaultAvatar;
 
   return (
     <Navbar fluid className="!bg-[#47D7AC]">
       <NavbarBrand as={Link} to="/">
         <img
-          src="/src/assets/logo_EcoLink.png"
+          src={logo}
           className="mr-3 h-6 sm:h-9"
           alt="Ecolink Logo"
         />
@@ -62,7 +62,6 @@ export function NavbarComponent() {
         </span>
       </NavbarBrand>
 
-      {/* Menu do usuário */}
       <div className="flex md:order-2">
         <Dropdown
           arrowIcon={false}
@@ -93,10 +92,10 @@ export function NavbarComponent() {
             </>
           )}
         </Dropdown>
+
         <NavbarToggle />
       </div>
 
-      {/* Links principais */}
       <NavbarCollapse>
         <NavbarLink
           as={Link}
@@ -105,6 +104,7 @@ export function NavbarComponent() {
         >
           Home
         </NavbarLink>
+
         <NavbarLink
           as={Link}
           to="/map"
@@ -112,6 +112,7 @@ export function NavbarComponent() {
         >
           Mapa
         </NavbarLink>
+
         <NavbarLink
           as={Link}
           to="/social"
